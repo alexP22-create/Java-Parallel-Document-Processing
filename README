@@ -1,0 +1,60 @@
+331CB Postolache Alexandru-Gabriel
+
+							Tema2 APD 
+
+				Procesarea de documente folosind paradigma
+							Map-Reduce
+
+I will explain every class at a time:
+
+	1)Tema2.java
+		- write_result(): function which writes the results in the output file
+		- main(): In the beginning the Splitter is splitting all the given documents
+in fragments of a certain dimension and these fragments are being added in the 
+fragments list. Then the map stage starts, then the reduce stage starts when map is all
+finnished with the results of the map stage. In the end it will write in the output 
+file based on the response of the reduce stage. 
+
+
+	2)Splitter.java
+		- the constructor calls the split() method which reads from the input files
+the documents which will get split based on a certain dimension in fragments.
+
+	3)Map.java 
+		- implements the map stage
+		- executeMapTasks(): the tasks are being created, then the executorService will
+execute them. After it executes one the result will be added to a dictionary based on the
+file the fragment was being part of. The executor is being shutdowned so that all the reduce
+tasks will be starting when all the map ones are already done. Returns the map results in a
+hasmap.
+
+	4)InputMapTask.java
+		- encapsultaes the info given to a Map task
+
+	5)MapTask.java
+		- the map task which implements Callable<MapTaskResponse>
+		- call(): opens the associated document, reads only the task's part of the file,
+finds the first character(before_seq) before the first word(character used in telling if
+this word is part of the current task or not based on the convention), splits the read
+string based on deliminators and cheks every word to see how long it is and if it is the
+maximum length found.Then adds the word to the dictionary which shows how many words have
+a certain number of characters. It will return a response containing this dictionary and
+the list with the longest words.
+
+	6)MapTaskResponse.java
+		- encapsulates the info returned by the Map Task
+
+	7)Reduce.java
+		- implements the reduce stage
+		- executeReduceTasks(): creates the ReduceTasks, starts them and returns a list of
+their responses.
+
+	8)ReduceTask.java
+		- first combines all the dictionaries got from the map stage in just one.
+		- then calculates the rank of the current task's associated file
+		- returns a response containing the file name, the rank's value, the size of
+the longeset word in that document, and how many other words with the same longest size
+there are in it.
+
+	9)ReduceTaskResponse.java
+		- encapsulates the info returned by the Reduce Task
